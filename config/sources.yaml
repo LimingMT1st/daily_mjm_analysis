@@ -1,0 +1,17 @@
+enabled_sources:
+  schedule: true
+  standings: true
+  news: true
+  injuries: true
+  squad: true
+source_names:
+  schedule: football_data
+  standings: football_data
+  news: rss
+  injuries: manual_placeholder
+  squad: manual_placeholder
+rss_sources:
+  - name: FIFA News
+    url: https://inside.fifa.com/rss
+  - name: BBC Sport Football
+    url: https://feeds.bbci.co.uk/sport/football/rss.xml

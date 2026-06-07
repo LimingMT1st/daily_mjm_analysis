@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ title }}</title>
+  <style>
+    :root {
+      --bg: #f5f1e8;
+      --paper: #fffdf8;
+      --ink: #1f2933;
+      --muted: #6b7280;
+      --line: #d7cbb5;
+      --accent: #0f766e;
+      --high: #0f766e;
+      --medium: #b45309;
+      --low: #9a3412;
+    }
+    body {
+      margin: 0;
+      font-family: "Georgia", "Noto Serif SC", serif;
+      background: radial-gradient(circle at top, #fff7e8, var(--bg));
+      color: var(--ink);
+    }
+    .page {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 32px 18px 56px;
+    }
+    .hero, .card, .summary {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 18px;
+    }
+    .hero {
+      background: linear-gradient(135deg, #fff8ec, #f2fffb);
+      border-radius: 20px;
+      box-shadow: 0 18px 45px rgba(15, 118, 110, 0.08);
+    }
+    h1, h2, h3 {
+      margin-top: 0;
+      color: #102a43;
+    }
+    h2 {
+      margin-top: 32px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--line);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+    }
+    .meta {
+      color: var(--muted);
+      font-size: 14px;
+    }
+    ul {
+      padding-left: 20px;
+    }
+    li + li {
+      margin-top: 8px;
+    }
+    .summary {
+      white-space: pre-wrap;
+    }
+    .tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-right: 8px;
+      background: #eef2f7;
+    }
+    .high { color: var(--high); }
+    .medium { color: var(--medium); }
+    .low { color: var(--low); }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <h1>{{ title }}</h1>
+      <p class="meta">生成时间：{{ generated_at }}</p>
+      <p>这是一份面向体育内容运营团队的世界杯情报简报，强调赛程事实、数据推断与 AI 判断分层展示，不包含任何赌博建议或投注建议。</p>
+    </section>
+
+    <h2>今日最值得关注的 3 场比赛</h2>
+    <div class="grid">
+      {% if top_matches %}
+      {% for item in top_matches %}
+      <article class="card">
+        <h3>{{ item.label }}</h3>
+        <p class="meta">关注等级 {{ item.analysis.attention_level }} | 重要性 {{ item.analysis.importance_score }} | 爆冷风险 {{ item.analysis.upset_risk }} | 出线影响 {{ item.analysis.qualification_impact }}</p>
+        <p><span class="tag">数据推断</span><span class="tag {{ item.confidence }}">{{ item.confidence }}</span>{{ item.analysis.explanation }}</p>
+      </article>
+      {% endfor %}
+      {% else %}
+      <article class="card"><p>暂无重点比赛。</p></article>
+      {% endif %}
+    </div>
+
+    <h2>今日 / 明日赛程</h2>
+    <div class="grid">
+      <section class="card">
+        <h3>今日赛程</h3>
+        <ul>
+          {% if today_matches %}
+          {% for match in today_matches %}
+          <li><span class="tag">事实</span><span class="tag high">high</span>{{ match.kickoff_local }} | {{ match.home_team.name }} vs {{ match.away_team.name }} | {{ match.stage }} | {{ match.city or "待定" }}</li>
+          {% endfor %}
+          {% else %}
+          <li>今日暂无赛程。</li>
+          {% endif %}
+        </ul>
+      </section>
+      <section class="card">
+        <h3>明日赛程</h3>
+        <ul>
+          {% if tomorrow_matches %}
+          {% for match in tomorrow_matches %}
+          <li><span class="tag">事实</span><span class="tag high">high</span>{{ match.kickoff_local }} | {{ match.home_team.name }} vs {{ match.away_team.name }} | {{ match.stage }} | {{ match.city or "待定" }}</li>
+          {% endfor %}
+          {% else %}
+          <li>明日暂无赛程。</li>
+          {% endif %}
+        </ul>
+      </section>
+    </div>
+
+    <h2>爆冷风险榜</h2>
+    <section class="card">
+      <ul>
+        {% if upset_risk_board %}
+        {% for item in upset_risk_board %}
+        <li><span class="tag">数据推断</span><span class="tag {{ item.confidence }}">{{ item.confidence }}</span>{{ item.label }} | 风险 {{ item.analysis.upset_risk }} | 新闻热度 {{ item.analysis.news_heat }} | 重要性 {{ item.analysis.importance_score }}</li>
+        {% endfor %}
+        {% else %}
+        <li>暂无可排序的爆冷风险样本。</li>
+        {% endif %}
+      </ul>
+    </section>
+
+    <h2>重点球队动态</h2>
+    <section class="card">
+      <ul>
+        {% if focus_team_dynamics %}
+        {% for item in focus_team_dynamics %}
+        <li><span class="tag">事实</span><span class="tag {{ item.confidence }}">{{ item.confidence }}</span>{{ item.team_name }}：{{ item.summary }}</li>
+        {% endfor %}
+        {% else %}
+        <li>暂无重点球队动态。</li>
+        {% endif %}
+      </ul>
+    </section>
+
+    <h2>重点比赛前瞻</h2>
+    {% if focus_matches %}
+    {% for item in focus_matches %}
+    <section class="card">
+      <h3>{{ item.label }}</h3>
+      <ul>
+        <li><span class="tag">数据推断</span><span class="tag {{ item.confidence }}">{{ item.confidence }}</span>关注等级：{{ item.analysis.attention_level }}</li>
+        <li><span class="tag">数据推断</span><span class="tag {{ item.confidence }}">{{ item.confidence }}</span>重要性评分：{{ item.analysis.importance_score }}</li>
+        <li><span class="tag">数据推断</span><span class="tag {{ item.confidence }}">{{ item.confidence }}</span>出线影响：{{ item.analysis.qualification_impact }}</li>
+        <li><span class="tag">数据推断</span><span class="tag {{ item.confidence }}">{{ item.confidence }}</span>新闻热度：{{ item.analysis.news_heat }}</li>
+        <li><span class="tag">数据推断</span><span class="tag {{ item.confidence }}">{{ item.confidence }}</span>爆冷风险：{{ item.analysis.upset_risk }}</li>
+        <li><span class="tag">AI判断</span><span class="tag {{ item.confidence }}">{{ item.confidence }}</span>状态摘要：{{ item.analysis.form_summary }}</li>
+        <li><span class="tag">AI判断</span><span class="tag {{ item.confidence }}">{{ item.confidence }}</span>规则解释：{{ item.analysis.explanation }}</li>
+      </ul>
+    </section>
+    {% endfor %}
+    {% else %}
+    <section class="card"><p>暂无前瞻内容。</p></section>
+    {% endif %}
+
+    <h2>新闻情报</h2>
+    <section class="card">
+      <ul>
+        {% if news_items %}
+        {% for item in news_items %}
+        <li><span class="tag">事实</span><span class="tag {{ item.credibility }}">{{ item.credibility }}</span>《{{ item.title }}》 | {{ item.source }} | {{ item.published_local }} | <a href="{{ item.url }}">{{ item.url }}</a></li>
+        {% endfor %}
+        {% else %}
+        <li>最近 48 小时暂无新闻情报。</li>
+        {% endif %}
+      </ul>
+    </section>
+
+    <h2>数据分析</h2>
+    <section class="card">
+      <ul>
+        {% if focus_matches %}
+        {% for item in focus_matches %}
+        <li><span class="tag">数据推断</span><span class="tag {{ item.confidence }}">{{ item.confidence }}</span>{{ item.label }}：关注等级 {{ item.analysis.attention_level }}，出线影响 {{ item.analysis.qualification_impact }}，新闻热度 {{ item.analysis.news_heat }}。</li>
+        {% endfor %}
+        {% else %}
+        <li>暂无数据分析条目。</li>
+        {% endif %}
+      </ul>
+    </section>
+
+    <h2>与昨日相比</h2>
+    <section class="card">
+      <ul>
+        <li><span class="tag">事实</span><span class="tag medium">medium</span>新增新闻数量：{{ changes.new_news_count }}</li>
+        {% if changes.match_status_changes %}
+        {% for line in changes.match_status_changes %}
+        <li><span class="tag">事实</span><span class="tag high">high</span>比赛状态变化：{{ line }}</li>
+        {% endfor %}
+        {% else %}
+        <li>比赛状态变化：无明显变化。</li>
+        {% endif %}
+        {% if changes.standings_changes %}
+        {% for line in changes.standings_changes %}
+        <li><span class="tag">事实</span><span class="tag high">high</span>积分榜变化：{{ line }}</li>
+        {% endfor %}
+        {% else %}
+        <li>积分榜变化：暂无或无明显变化。</li>
+        {% endif %}
+      </ul>
+    </section>
+
+    <h2>AI 总结</h2>
+    <section class="summary">{{ ai_summary }}</section>
+
+    <h2>数据来源说明</h2>
+    <section class="card">
+      <ul>
+        {% for source in data_sources %}
+        <li><span class="tag">事实</span><span class="tag high">high</span>{{ source }}</li>
+        {% endfor %}
+      </ul>
+    </section>
+
+    <h2>合规说明</h2>
+    <section class="card">
+      <p><span class="tag">事实</span><span class="tag high">high</span>本简报仅用于内容研判与运营参考，不构成任何赌博建议或投注建议。</p>
+    </section>
+  </main>
+</body>
+</html>

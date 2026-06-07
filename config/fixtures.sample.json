@@ -1,0 +1,131 @@
+[
+  {
+    "id": "fixture-001",
+    "competition": "FIFA World Cup 2026",
+    "stage": "Group Stage",
+    "venue": "Tokyo Dome",
+    "city": "Tokyo",
+    "kickoff_at": "2026-06-07T19:00:00+09:00",
+    "importance": "high",
+    "home_team": {
+      "id": "jpn",
+      "name": "Japan",
+      "short_name": "Japan",
+      "fifa_code": "JPN",
+      "confederation": "AFC",
+      "group_name": "Group A"
+    },
+    "away_team": {
+      "id": "can",
+      "name": "Canada",
+      "short_name": "Canada",
+      "fifa_code": "CAN",
+      "confederation": "CONCACAF",
+      "group_name": "Group A"
+    },
+    "result": {
+      "home_score": null,
+      "away_score": null,
+      "status": "scheduled",
+      "winner_team_id": null,
+      "decided_by": null
+    }
+  },
+  {
+    "id": "fixture-002",
+    "competition": "FIFA World Cup 2026",
+    "stage": "Group Stage",
+    "venue": "Yokohama Stadium",
+    "city": "Yokohama",
+    "kickoff_at": "2026-06-08T18:30:00+09:00",
+    "importance": "medium",
+    "home_team": {
+      "id": "usa",
+      "name": "United States",
+      "short_name": "USA",
+      "fifa_code": "USA",
+      "confederation": "CONCACAF",
+      "group_name": "Group B"
+    },
+    "away_team": {
+      "id": "mex",
+      "name": "Mexico",
+      "short_name": "Mexico",
+      "fifa_code": "MEX",
+      "confederation": "CONCACAF",
+      "group_name": "Group B"
+    },
+    "result": {
+      "home_score": null,
+      "away_score": null,
+      "status": "scheduled",
+      "winner_team_id": null,
+      "decided_by": null
+    }
+  },
+  {
+    "id": "fixture-003",
+    "competition": "FIFA World Cup 2026",
+    "stage": "Group Stage",
+    "venue": "Saitama Stadium",
+    "city": "Saitama",
+    "kickoff_at": "2026-06-09T21:00:00+09:00",
+    "importance": "high",
+    "home_team": {
+      "id": "ger",
+      "name": "Germany",
+      "short_name": "Germany",
+      "fifa_code": "GER",
+      "confederation": "UEFA",
+      "group_name": "Group C"
+    },
+    "away_team": {
+      "id": "fra",
+      "name": "France",
+      "short_name": "France",
+      "fifa_code": "FRA",
+      "confederation": "UEFA",
+      "group_name": "Group C"
+    },
+    "result": {
+      "home_score": null,
+      "away_score": null,
+      "status": "scheduled",
+      "winner_team_id": null,
+      "decided_by": null
+    }
+  },
+  {
+    "id": "fixture-004",
+    "competition": "FIFA World Cup 2026",
+    "stage": "Group Stage",
+    "venue": "Nagoya Stadium",
+    "city": "Nagoya",
+    "kickoff_at": "2026-06-10T20:00:00+09:00",
+    "importance": "medium",
+    "home_team": {
+      "id": "arg",
+      "name": "Argentina",
+      "short_name": "Argentina",
+      "fifa_code": "ARG",
+      "confederation": "CONMEBOL",
+      "group_name": "Group D"
+    },
+    "away_team": {
+      "id": "bra",
+      "name": "Brazil",
+      "short_name": "Brazil",
+      "fifa_code": "BRA",
+      "confederation": "CONMEBOL",
+      "group_name": "Group D"
+    },
+    "result": {
+      "home_score": null,
+      "away_score": null,
+      "status": "scheduled",
+      "winner_team_id": null,
+      "decided_by": null
+    }
+  }
+]
+

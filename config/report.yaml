@@ -1,0 +1,15 @@
+timezone: Asia/Tokyo
+language: zh-CN
+sections:
+  overview: true
+  matches: true
+  standings: true
+  injuries: true
+  news: true
+  analysis: true
+  alerts: true
+push_channels:
+  email: false
+  telegram: false
+  wecom: false
+
