@@ -8,10 +8,12 @@
 {% endfor %}
 
 ## 🔥 今日最值得关注的 3 场比赛
-{% if top_matches %}
-{% for item in top_matches %}
-- 【数据推断】【可信度: {{ item.confidence_label }}】{{ item.label }} | 关注等级 {{ item.analysis.attention_level }} | 重要性 {{ item.analysis.importance_score }} | 爆冷风险 {{ item.upset_risk_label }} | 出线影响 {{ item.analysis.qualification_impact }}
-- 【AI判断】【可信度: {{ item.confidence_label }}】{{ item.explanation_localized }}
+{% if today_focus_items %}
+{% for item in today_focus_items %}
+### {{ item.tag }}：{{ item.label }}
+- 【数据推断】【可信度: {{ item.confidence_label }}】为什么看：{{ item.reason }}
+- 【数据推断】【可信度: {{ item.confidence_label }}】风险点：{{ item.risk }}
+- 【AI判断】【可信度: {{ item.confidence_label }}】内容建议：{{ item.publish_angle }}
 {% endfor %}
 {% else %}
 - 【事实】【可信度: 高】暂无重点比赛。
