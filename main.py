@@ -395,7 +395,7 @@ def run_daily_pipeline(
     )
 
     LOGGER.info("Step 7/7: sending report")
-    send_results = {"email": False, "telegram": False, "wecom": False}
+    send_results = {"email": False, "feishu": False, "telegram": False, "wecom": False}
     if send_report_enabled:
         try:
             send_results = notifier_manager.send(
