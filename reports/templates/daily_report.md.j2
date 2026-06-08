@@ -2,112 +2,124 @@
 
 生成时间：{{ generated_at }}
 
+## 运营速览
+{% for line in briefing_highlights %}
+- {{ line }}
+{% endfor %}
+
 ## 今日最值得关注的 3 场比赛
 {% if top_matches %}
 {% for item in top_matches %}
-- 【数据推断】【可信度: {{ item.confidence }}】{{ item.label }} | 关注等级 {{ item.analysis.attention_level }} | 重要性 {{ item.analysis.importance_score }} | 爆冷风险 {{ item.analysis.upset_risk }} | 出线影响 {{ item.analysis.qualification_impact }}
-  - 【AI判断】【可信度: {{ item.confidence }}】{{ item.analysis.explanation }}
+- 【数据推断】【可信度: {{ item.confidence_label }}】{{ item.label }} | 关注等级 {{ item.analysis.attention_level }} | 重要性 {{ item.analysis.importance_score }} | 爆冷风险 {{ item.upset_risk_label }} | 出线影响 {{ item.analysis.qualification_impact }}
+- 【AI判断】【可信度: {{ item.confidence_label }}】{{ item.explanation_localized }}
 {% endfor %}
 {% else %}
-- 【事实】【可信度: high】暂无重点比赛。
+- 【事实】【可信度: 高】暂无重点比赛。
 {% endif %}
 
 ## 今日/明日赛程
 ### 今日赛程
 {% if today_matches %}
 {% for match in today_matches %}
-- 【事实】【可信度: high】{{ match.kickoff_local }} | {{ match.home_team.name }} vs {{ match.away_team.name }} | {{ match.stage }} | {{ match.city or "待定" }}
+- 【事实】【可信度: 高】{{ match.kickoff_local }} | {{ match.home_name }} 对 {{ match.away_name }} | {{ match.stage }} | {{ match.city_display }}
 {% endfor %}
 {% else %}
-- 【事实】【可信度: high】今日暂无赛程。
+- 【事实】【可信度: 高】今日暂无赛程。
 {% endif %}
 
 ### 明日赛程
 {% if tomorrow_matches %}
 {% for match in tomorrow_matches %}
-- 【事实】【可信度: high】{{ match.kickoff_local }} | {{ match.home_team.name }} vs {{ match.away_team.name }} | {{ match.stage }} | {{ match.city or "待定" }}
+- 【事实】【可信度: 高】{{ match.kickoff_local }} | {{ match.home_name }} 对 {{ match.away_name }} | {{ match.stage }} | {{ match.city_display }}
 {% endfor %}
 {% else %}
-- 【事实】【可信度: high】明日暂无赛程。
+- 【事实】【可信度: 高】明日暂无赛程。
 {% endif %}
 
 ## 爆冷风险榜
 {% if upset_risk_board %}
 {% for item in upset_risk_board %}
-- 【数据推断】【可信度: {{ item.confidence }}】{{ item.label }} | 爆冷风险 {{ item.analysis.upset_risk }} | 新闻热度 {{ item.analysis.news_heat }} | 重要性 {{ item.analysis.importance_score }}
+- 【数据推断】【可信度: {{ item.confidence_label }}】{{ item.label }} | 爆冷风险 {{ item.upset_risk_label }} | 新闻热度 {{ item.analysis.news_heat }} | 重要性 {{ item.analysis.importance_score }}
 {% endfor %}
 {% else %}
-- 【数据推断】【可信度: low】暂无可排序的爆冷风险样本。
+- 【数据推断】【可信度: 低】暂无可排序的爆冷风险样本。
 {% endif %}
 
 ## 重点球队动态
 {% if focus_team_dynamics %}
 {% for item in focus_team_dynamics %}
-- 【事实】【可信度: {{ item.confidence }}】{{ item.team_name }}：{{ item.summary }}
+- 【事实】【可信度: {{ item.confidence_label }}】{{ item.team_name }}：{{ item.summary }}
 {% endfor %}
 {% else %}
-- 【事实】【可信度: low】暂无重点球队动态。
+- 【事实】【可信度: 低】暂无重点球队动态。
 {% endif %}
 
 ## 重点比赛前瞻
 {% if focus_matches %}
 {% for item in focus_matches %}
 ### {{ item.label }}
-- 【数据推断】【可信度: {{ item.confidence }}】关注等级：{{ item.analysis.attention_level }}
-- 【数据推断】【可信度: {{ item.confidence }}】重要性评分：{{ item.analysis.importance_score }}
-- 【数据推断】【可信度: {{ item.confidence }}】出线影响：{{ item.analysis.qualification_impact }}
-- 【数据推断】【可信度: {{ item.confidence }}】新闻热度：{{ item.analysis.news_heat }}
-- 【数据推断】【可信度: {{ item.confidence }}】爆冷风险：{{ item.analysis.upset_risk }}
-- 【AI判断】【可信度: {{ item.confidence }}】状态摘要：{{ item.analysis.form_summary }}
-- 【AI判断】【可信度: {{ item.confidence }}】规则解释：{{ item.analysis.explanation }}
+- 【数据推断】【可信度: {{ item.confidence_label }}】关注等级：{{ item.analysis.attention_level }}
+- 【数据推断】【可信度: {{ item.confidence_label }}】重要性评分：{{ item.analysis.importance_score }}
+- 【数据推断】【可信度: {{ item.confidence_label }}】出线影响：{{ item.analysis.qualification_impact }}
+- 【数据推断】【可信度: {{ item.confidence_label }}】新闻热度：{{ item.analysis.news_heat }}
+- 【数据推断】【可信度: {{ item.confidence_label }}】爆冷风险：{{ item.upset_risk_label }}
+- 【AI判断】【可信度: {{ item.confidence_label }}】状态摘要：{{ item.form_summary_localized }}
+- 【AI判断】【可信度: {{ item.confidence_label }}】规则解释：{{ item.explanation_localized }}
 {% endfor %}
 {% else %}
-【事实】【可信度: high】暂无前瞻内容。
+- 【事实】【可信度: 高】暂无前瞻内容。
 {% endif %}
 
 ## 新闻情报
 {% if news_items %}
 {% for item in news_items %}
-- 【事实】【可信度: {{ item.credibility }}】《{{ item.title }}》 | {{ item.source }} | {{ item.published_local }}
-  链接：{{ item.url }}
+- 【事实】【可信度: {{ item.credibility_label }}】{{ item.summary_cn }}
+  来源：{{ item.source }} | 发布时间：{{ item.published_local }}
+  原文链接：{{ item.url }}
 {% endfor %}
 {% else %}
-- 【事实】【可信度: high】最近 48 小时暂无新闻情报。
+- 【事实】【可信度: 高】最近 48 小时暂无新闻情报。
 {% endif %}
 
 ## 数据分析
 {% if focus_matches %}
 {% for item in focus_matches %}
-- 【数据推断】【可信度: {{ item.confidence }}】{{ item.label }}：关注等级 {{ item.analysis.attention_level }}，出线影响 {{ item.analysis.qualification_impact }}，新闻热度 {{ item.analysis.news_heat }}。
+- 【数据推断】【可信度: {{ item.confidence_label }}】{{ item.label }}：关注等级 {{ item.analysis.attention_level }}，出线影响 {{ item.analysis.qualification_impact }}，新闻热度 {{ item.analysis.news_heat }}。
 {% endfor %}
 {% else %}
-- 【数据推断】【可信度: low】暂无数据分析条目。
+- 【数据推断】【可信度: 低】暂无数据分析条目。
 {% endif %}
 
 ## 与昨日相比
-- 【事实】【可信度: medium】新增新闻数量：{{ changes.new_news_count }}
+- 【事实】【可信度: 中】新增新闻数量：{{ changes.new_news_count }}
 {% if changes.match_status_changes %}
 {% for line in changes.match_status_changes %}
-- 【事实】【可信度: high】比赛状态变化：{{ line }}
+- 【事实】【可信度: 高】比赛状态变化：{{ line }}
 {% endfor %}
 {% else %}
-- 【事实】【可信度: high】比赛状态变化：无明显变化。
+- 【事实】【可信度: 高】比赛状态变化：无明显变化。
 {% endif %}
 {% if changes.standings_changes %}
 {% for line in changes.standings_changes %}
-- 【事实】【可信度: high】积分榜变化：{{ line }}
+- 【事实】【可信度: 高】积分榜变化：{{ line }}
 {% endfor %}
 {% else %}
-- 【事实】【可信度: high】积分榜变化：暂无或无明显变化。
+- 【事实】【可信度: 高】积分榜变化：暂无或无明显变化。
 {% endif %}
 
 ## AI 总结
-{{ ai_summary }}
+{% if ai_summary_lines %}
+{% for line in ai_summary_lines %}
+- {{ line }}
+{% endfor %}
+{% else %}
+- 暂无可用 AI 总结。
+{% endif %}
 
 ## 数据来源说明
 {% for source in data_sources %}
-- 【事实】【可信度: high】{{ source }}
+- 【事实】【可信度: 高】{{ source }}
 {% endfor %}
 
 ## 合规说明
-- 【事实】【可信度: high】本简报仅用于内容研判与运营参考，不构成任何赌博建议或投注建议。
+- 【事实】【可信度: 高】本简报仅用于内容研判与运营参考，不构成任何赌博建议或投注建议。
