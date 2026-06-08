@@ -87,14 +87,23 @@
       <p>这是一份面向体育内容运营团队的世界杯情报简报，强调赛程事实、数据推断与 AI 判断分层展示，不包含任何赌博建议或投注建议。</p>
     </section>
 
+    <h2>运营速览</h2>
+    <section class="card">
+      <ul>
+        {% for line in briefing_highlights %}
+        <li><span class="tag">结论</span><span class="tag medium">中</span>{{ line }}</li>
+        {% endfor %}
+      </ul>
+    </section>
+
     <h2>今日最值得关注的 3 场比赛</h2>
     <div class="grid">
       {% if top_matches %}
       {% for item in top_matches %}
       <article class="card">
         <h3>{{ item.label }}</h3>
-        <p class="meta">关注等级 {{ item.analysis.attention_level }} | 重要性 {{ item.analysis.importance_score }} | 爆冷风险 {{ item.analysis.upset_risk }} | 出线影响 {{ item.analysis.qualification_impact }}</p>
-        <p><span class="tag">数据推断</span><span class="tag {{ item.confidence }}">{{ item.confidence }}</span>{{ item.analysis.explanation }}</p>
+        <p class="meta">关注等级 {{ item.analysis.attention_level }} | 重要性 {{ item.analysis.importance_score }} | 爆冷风险 {{ item.upset_risk_label }} | 出线影响 {{ item.analysis.qualification_impact }}</p>
+        <p><span class="tag">数据推断</span><span class="tag {{ item.confidence }}">{{ item.confidence_label }}</span>{{ item.explanation_localized }}</p>
       </article>
       {% endfor %}
       {% else %}
@@ -109,7 +118,7 @@
         <ul>
           {% if today_matches %}
           {% for match in today_matches %}
-          <li><span class="tag">事实</span><span class="tag high">high</span>{{ match.kickoff_local }} | {{ match.home_team.name }} vs {{ match.away_team.name }} | {{ match.stage }} | {{ match.city or "待定" }}</li>
+          <li><span class="tag">事实</span><span class="tag high">高</span>{{ match.kickoff_local }} | {{ match.home_name }} 对 {{ match.away_name }} | {{ match.stage }} | {{ match.city_display }}</li>
           {% endfor %}
           {% else %}
           <li>今日暂无赛程。</li>
@@ -121,7 +130,7 @@
         <ul>
           {% if tomorrow_matches %}
           {% for match in tomorrow_matches %}
-          <li><span class="tag">事实</span><span class="tag high">high</span>{{ match.kickoff_local }} | {{ match.home_team.name }} vs {{ match.away_team.name }} | {{ match.stage }} | {{ match.city or "待定" }}</li>
+          <li><span class="tag">事实</span><span class="tag high">高</span>{{ match.kickoff_local }} | {{ match.home_name }} 对 {{ match.away_name }} | {{ match.stage }} | {{ match.city_display }}</li>
           {% endfor %}
           {% else %}
           <li>明日暂无赛程。</li>
@@ -135,7 +144,7 @@
       <ul>
         {% if upset_risk_board %}
         {% for item in upset_risk_board %}
-        <li><span class="tag">数据推断</span><span class="tag {{ item.confidence }}">{{ item.confidence }}</span>{{ item.label }} | 风险 {{ item.analysis.upset_risk }} | 新闻热度 {{ item.analysis.news_heat }} | 重要性 {{ item.analysis.importance_score }}</li>
+        <li><span class="tag">数据推断</span><span class="tag {{ item.confidence }}">{{ item.confidence_label }}</span>{{ item.label }} | 爆冷风险 {{ item.upset_risk_label }} | 新闻热度 {{ item.analysis.news_heat }} | 重要性 {{ item.analysis.importance_score }}</li>
         {% endfor %}
         {% else %}
         <li>暂无可排序的爆冷风险样本。</li>
@@ -148,7 +157,7 @@
       <ul>
         {% if focus_team_dynamics %}
         {% for item in focus_team_dynamics %}
-        <li><span class="tag">事实</span><span class="tag {{ item.confidence }}">{{ item.confidence }}</span>{{ item.team_name }}：{{ item.summary }}</li>
+        <li><span class="tag">事实</span><span class="tag {{ item.confidence }}">{{ item.confidence_label }}</span>{{ item.team_name }}：{{ item.summary }}</li>
         {% endfor %}
         {% else %}
         <li>暂无重点球队动态。</li>
@@ -162,13 +171,13 @@
     <section class="card">
       <h3>{{ item.label }}</h3>
       <ul>
-        <li><span class="tag">数据推断</span><span class="tag {{ item.confidence }}">{{ item.confidence }}</span>关注等级：{{ item.analysis.attention_level }}</li>
-        <li><span class="tag">数据推断</span><span class="tag {{ item.confidence }}">{{ item.confidence }}</span>重要性评分：{{ item.analysis.importance_score }}</li>
-        <li><span class="tag">数据推断</span><span class="tag {{ item.confidence }}">{{ item.confidence }}</span>出线影响：{{ item.analysis.qualification_impact }}</li>
-        <li><span class="tag">数据推断</span><span class="tag {{ item.confidence }}">{{ item.confidence }}</span>新闻热度：{{ item.analysis.news_heat }}</li>
-        <li><span class="tag">数据推断</span><span class="tag {{ item.confidence }}">{{ item.confidence }}</span>爆冷风险：{{ item.analysis.upset_risk }}</li>
-        <li><span class="tag">AI判断</span><span class="tag {{ item.confidence }}">{{ item.confidence }}</span>状态摘要：{{ item.analysis.form_summary }}</li>
-        <li><span class="tag">AI判断</span><span class="tag {{ item.confidence }}">{{ item.confidence }}</span>规则解释：{{ item.analysis.explanation }}</li>
+        <li><span class="tag">数据推断</span><span class="tag {{ item.confidence }}">{{ item.confidence_label }}</span>关注等级：{{ item.analysis.attention_level }}</li>
+        <li><span class="tag">数据推断</span><span class="tag {{ item.confidence }}">{{ item.confidence_label }}</span>重要性评分：{{ item.analysis.importance_score }}</li>
+        <li><span class="tag">数据推断</span><span class="tag {{ item.confidence }}">{{ item.confidence_label }}</span>出线影响：{{ item.analysis.qualification_impact }}</li>
+        <li><span class="tag">数据推断</span><span class="tag {{ item.confidence }}">{{ item.confidence_label }}</span>新闻热度：{{ item.analysis.news_heat }}</li>
+        <li><span class="tag">数据推断</span><span class="tag {{ item.confidence }}">{{ item.confidence_label }}</span>爆冷风险：{{ item.upset_risk_label }}</li>
+        <li><span class="tag">AI判断</span><span class="tag {{ item.confidence }}">{{ item.confidence_label }}</span>状态摘要：{{ item.form_summary_localized }}</li>
+        <li><span class="tag">AI判断</span><span class="tag {{ item.confidence }}">{{ item.confidence_label }}</span>规则解释：{{ item.explanation_localized }}</li>
       </ul>
     </section>
     {% endfor %}
@@ -181,7 +190,7 @@
       <ul>
         {% if news_items %}
         {% for item in news_items %}
-        <li><span class="tag">事实</span><span class="tag {{ item.credibility }}">{{ item.credibility }}</span>《{{ item.title }}》 | {{ item.source }} | {{ item.published_local }} | <a href="{{ item.url }}">{{ item.url }}</a></li>
+        <li><span class="tag">事实</span><span class="tag {{ item.credibility }}">{{ item.credibility_label }}</span>{{ item.summary_cn }}<br>来源：{{ item.source }} | 发布时间：{{ item.published_local }} | <a href="{{ item.url }}">{{ item.url }}</a></li>
         {% endfor %}
         {% else %}
         <li>最近 48 小时暂无新闻情报。</li>
@@ -194,7 +203,7 @@
       <ul>
         {% if focus_matches %}
         {% for item in focus_matches %}
-        <li><span class="tag">数据推断</span><span class="tag {{ item.confidence }}">{{ item.confidence }}</span>{{ item.label }}：关注等级 {{ item.analysis.attention_level }}，出线影响 {{ item.analysis.qualification_impact }}，新闻热度 {{ item.analysis.news_heat }}。</li>
+        <li><span class="tag">数据推断</span><span class="tag {{ item.confidence }}">{{ item.confidence_label }}</span>{{ item.label }}：关注等级 {{ item.analysis.attention_level }}，出线影响 {{ item.analysis.qualification_impact }}，新闻热度 {{ item.analysis.news_heat }}。</li>
         {% endfor %}
         {% else %}
         <li>暂无数据分析条目。</li>
@@ -205,17 +214,17 @@
     <h2>与昨日相比</h2>
     <section class="card">
       <ul>
-        <li><span class="tag">事实</span><span class="tag medium">medium</span>新增新闻数量：{{ changes.new_news_count }}</li>
+        <li><span class="tag">事实</span><span class="tag medium">中</span>新增新闻数量：{{ changes.new_news_count }}</li>
         {% if changes.match_status_changes %}
         {% for line in changes.match_status_changes %}
-        <li><span class="tag">事实</span><span class="tag high">high</span>比赛状态变化：{{ line }}</li>
+        <li><span class="tag">事实</span><span class="tag high">高</span>比赛状态变化：{{ line }}</li>
         {% endfor %}
         {% else %}
         <li>比赛状态变化：无明显变化。</li>
         {% endif %}
         {% if changes.standings_changes %}
         {% for line in changes.standings_changes %}
-        <li><span class="tag">事实</span><span class="tag high">high</span>积分榜变化：{{ line }}</li>
+        <li><span class="tag">事实</span><span class="tag high">高</span>积分榜变化：{{ line }}</li>
         {% endfor %}
         {% else %}
         <li>积分榜变化：暂无或无明显变化。</li>
@@ -224,20 +233,30 @@
     </section>
 
     <h2>AI 总结</h2>
-    <section class="summary">{{ ai_summary }}</section>
+    <section class="card">
+      <ul>
+        {% if ai_summary_lines %}
+        {% for line in ai_summary_lines %}
+        <li>{{ line }}</li>
+        {% endfor %}
+        {% else %}
+        <li>暂无可用 AI 总结。</li>
+        {% endif %}
+      </ul>
+    </section>
 
     <h2>数据来源说明</h2>
     <section class="card">
       <ul>
         {% for source in data_sources %}
-        <li><span class="tag">事实</span><span class="tag high">high</span>{{ source }}</li>
+        <li><span class="tag">事实</span><span class="tag high">高</span>{{ source }}</li>
         {% endfor %}
       </ul>
     </section>
 
     <h2>合规说明</h2>
     <section class="card">
-      <p><span class="tag">事实</span><span class="tag high">high</span>本简报仅用于内容研判与运营参考，不构成任何赌博建议或投注建议。</p>
+      <p><span class="tag">事实</span><span class="tag high">高</span>本简报仅用于内容研判与运营参考，不构成任何赌博建议或投注建议。</p>
     </section>
   </main>
 </body>
