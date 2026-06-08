@@ -44,6 +44,12 @@ def test_news_collector_filters_keywords_deduplicates_and_limits_to_48_hours(
             "published": "Sat, 06 Jun 2026 09:00:00 GMT",
         },
         {
+            "title": "Mexico camp update before tournament test",
+            "summary": "Same link should be removed even if title changes.",
+            "link": "https://example.com/news/2",
+            "published": "Sat, 06 Jun 2026 09:10:00 GMT",
+        },
+        {
             "title": "League transfer rumor roundup",
             "summary": "This should be filtered out.",
             "link": "https://example.com/news/3",
