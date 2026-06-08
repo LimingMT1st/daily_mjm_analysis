@@ -196,12 +196,26 @@ class ReportManager:
 
         focus_team_dynamics = self._build_focus_team_dynamics(report_data, match_map)
         ai_summary_lines = self._normalize_ai_summary(ai_summary)
+        fact_briefs = self._build_fact_briefs(
+            top_matches=top_matches,
+            news_items=news_items,
+            focus_team_dynamics=focus_team_dynamics,
+            changes=changes,
+        )
+        ai_action_items = self._build_ai_action_items(
+            top_matches=top_matches,
+            news_items=news_items,
+            focus_team_dynamics=focus_team_dynamics,
+            changes=changes,
+        )
         briefing_highlights = self._build_briefing_highlights(
             top_matches=top_matches,
             today_matches=today_matches,
             tomorrow_matches=tomorrow_matches,
             changes=changes,
             news_items=news_items,
+            fact_briefs=fact_briefs,
+            ai_action_items=ai_action_items,
         )
 
         data_sources = [
@@ -225,6 +239,8 @@ class ReportManager:
             "news_items": news_items,
             "ai_summary": ai_summary,
             "ai_summary_lines": ai_summary_lines,
+            "fact_briefs": fact_briefs,
+            "ai_action_items": ai_action_items,
             "briefing_highlights": briefing_highlights,
             "data_sources": data_sources,
             "changes": changes.to_dict(),
@@ -237,6 +253,8 @@ class ReportManager:
         tomorrow_matches: list[dict],
         changes: ReportChanges,
         news_items: list[dict],
+        fact_briefs: list[str],
+        ai_action_items: list[str],
     ) -> list[str]:
         lines: list[str] = []
         if top_matches:
@@ -263,7 +281,80 @@ class ReportManager:
             lines.append(f"比赛状态出现 {len(changes.match_status_changes)} 项变化。")
         else:
             lines.append("比赛状态暂无明显变化。")
+        if fact_briefs:
+            lines.append(f"今日最强事实信号：{fact_briefs[0]}")
+        if ai_action_items:
+            lines.append(f"AI建议：{ai_action_items[0]}")
         return lines
+
+    def _build_fact_briefs(
+        self,
+        top_matches: list[dict],
+        news_items: list[dict],
+        focus_team_dynamics: list[dict],
+        changes: ReportChanges,
+    ) -> list[str]:
+        lines: list[str] = []
+        if top_matches:
+            for item in top_matches[:2]:
+                lines.append(
+                    f"{item['label']} 已进入重点观察名单，重要性 {item['analysis'].importance_score}，"
+                    f"出线影响 {item['analysis'].qualification_impact}。"
+                )
+        if news_items:
+            for item in news_items[:3]:
+                lines.append(
+                    f"{item['summary_cn']} 来源 {item['source']}，发布时间 {item['published_local']}。"
+                )
+        focus_signals = [
+            item for item in focus_team_dynamics if "暂无" not in item["summary"]
+        ]
+        for item in focus_signals[:2]:
+            lines.append(f"{item['team_name']}：{item['summary']}")
+        if changes.new_news_count:
+            lines.append(f"与昨日相比，新增可用新闻 {changes.new_news_count} 条。")
+        return lines[:6]
+
+    def _build_ai_action_items(
+        self,
+        top_matches: list[dict],
+        news_items: list[dict],
+        focus_team_dynamics: list[dict],
+        changes: ReportChanges,
+    ) -> list[str]:
+        lines: list[str] = []
+        if top_matches:
+            top_item = top_matches[0]
+            lines.append(
+                f"优先围绕 {top_item['label']} 准备前瞻稿，标题建议突出关注等级 {top_item['analysis'].attention_level} "
+                f"和爆冷风险 {top_item['upset_risk_label']}。"
+            )
+        else:
+            lines.append("今天没有强赛程驱动内容，建议把选题重心放在球队动态、名单变化和场外因素。")
+
+        medium_or_high_news = [
+            item for item in news_items if item["credibility"] in {"medium", "high"}
+        ]
+        if medium_or_high_news:
+            lines.append(
+                f"优先处理前 {min(3, len(medium_or_high_news))} 条主流媒体消息，适合整理成“备战动态”或“名单观察”短内容。"
+            )
+
+        focus_signals = [
+            item for item in focus_team_dynamics if "暂无" not in item["summary"]
+        ]
+        if focus_signals:
+            lines.append(
+                f"重点跟进 {focus_signals[0]['team_name']} 相关动态，当前这支队伍是焦点球队里最有新增信息的一支。"
+            )
+
+        if changes.new_news_count >= 5:
+            lines.append("新闻增量较高，建议今天补一条“24小时情报变化”汇总卡片。")
+        else:
+            lines.append("新闻增量有限，建议减少快讯数量，改做一条总结型内容。")
+
+        lines.append("避免输出投注、盘口或赌博导向表达，统一采用情报、备战、舆情和名单变化视角。")
+        return lines[:5]
 
     def _news_credibility(self, source: str) -> str:
         normalized = source.casefold()
