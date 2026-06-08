@@ -132,8 +132,8 @@ def test_feishu_notifier_posts_text(monkeypatch) -> None:
 
     assert result is True
     assert "open.feishu.cn" in captured["url"]
-    assert "msg_type" in captured["body"]
-    assert "Hello Feishu" in captured["body"]
+    assert "interactive" in captured["body"]
+    assert "Daily Report" in captured["body"]
 
 
 def test_wecom_notifier_posts_markdown(monkeypatch) -> None:
