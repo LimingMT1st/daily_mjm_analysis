@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from email.message import EmailMessage
 
-from notifiers import EmailNotifier, TelegramNotifier, WeComNotifier
+from notifiers import EmailNotifier, FeishuNotifier, TelegramNotifier, WeComNotifier
 
 
 def test_email_notifier_skips_when_config_missing(capsys) -> None:
@@ -93,6 +93,47 @@ def test_telegram_notifier_posts_message(monkeypatch) -> None:
     assert result is True
     assert "api.telegram.org" in captured["url"]
     assert "Daily Report" in captured["body"]
+
+
+def test_feishu_notifier_skips_when_webhook_missing(capsys) -> None:
+    notifier = FeishuNotifier(webhook_url="")
+
+    result = notifier.send(title="Daily Report", content="Hello Feishu")
+
+    captured = capsys.readouterr()
+    assert result is False
+    assert "skipped" in captured.out
+
+
+def test_feishu_notifier_posts_text(monkeypatch) -> None:
+    captured: dict[str, object] = {}
+
+    class MockResponse:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, exc_type, exc, tb):
+            return False
+
+        def read(self):
+            return b'{"StatusCode":0}'
+
+    def mock_urlopen(req, timeout=30):
+        captured["url"] = req.full_url
+        captured["body"] = req.data.decode("utf-8")
+        return MockResponse()
+
+    monkeypatch.setattr("notifiers.feishu_notifier.request.urlopen", mock_urlopen)
+
+    notifier = FeishuNotifier(
+        webhook_url="https://open.feishu.cn/open-apis/bot/v2/hook/example"
+    )
+    result = notifier.send(title="Daily Report", content="Hello Feishu")
+
+    assert result is True
+    assert "open.feishu.cn" in captured["url"]
+    assert "msg_type" in captured["body"]
+    assert "Hello Feishu" in captured["body"]
 
 
 def test_wecom_notifier_posts_markdown(monkeypatch) -> None:
