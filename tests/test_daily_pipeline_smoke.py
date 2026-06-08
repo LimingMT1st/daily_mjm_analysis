@@ -31,7 +31,7 @@ def test_daily_pipeline_smoke(tmp_path) -> None:
             html: str | None = None,
             dry_run: bool = False,
         ) -> dict[str, bool]:
-            return {"email": False, "telegram": False, "wecom": False}
+            return {"email": False, "feishu": False, "telegram": False, "wecom": False}
 
     app_config = SimpleNamespace(
         timezone="Asia/Tokyo",
@@ -54,4 +54,9 @@ def test_daily_pipeline_smoke(tmp_path) -> None:
     assert result.artifacts.markdown_path.exists()
     assert result.artifacts.html_path.exists()
     assert "每日美加墨世界杯情报日报" in result.artifacts.markdown_content
-    assert result.send_results == {"email": False, "telegram": False, "wecom": False}
+    assert result.send_results == {
+        "email": False,
+        "feishu": False,
+        "telegram": False,
+        "wecom": False,
+    }
