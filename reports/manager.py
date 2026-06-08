@@ -196,6 +196,10 @@ class ReportManager:
 
         focus_team_dynamics = self._build_focus_team_dynamics(report_data, match_map)
         ai_summary_lines = self._normalize_ai_summary(ai_summary)
+        news_interpretations = self._build_news_interpretations(
+            news_items=news_items,
+            focus_team_dynamics=focus_team_dynamics,
+        )
         fact_briefs = self._build_fact_briefs(
             top_matches=top_matches,
             news_items=news_items,
@@ -239,6 +243,7 @@ class ReportManager:
             "news_items": news_items,
             "ai_summary": ai_summary,
             "ai_summary_lines": ai_summary_lines,
+            "news_interpretations": news_interpretations,
             "fact_briefs": fact_briefs,
             "ai_action_items": ai_action_items,
             "briefing_highlights": briefing_highlights,
@@ -355,6 +360,38 @@ class ReportManager:
 
         lines.append("避免输出投注、盘口或赌博导向表达，统一采用情报、备战、舆情和名单变化视角。")
         return lines[:5]
+
+    def _build_news_interpretations(
+        self,
+        news_items: list[dict],
+        focus_team_dynamics: list[dict],
+    ) -> list[str]:
+        lines: list[str] = []
+        for item in news_items[:5]:
+            summary = item["summary_cn"]
+            if "队内角色分工" in summary:
+                lines.append("英格兰队长层级与更衣室分工出现明确信号，适合做“谁在带队”角度的备战稿。")
+            elif "阵容与人员变动" in summary:
+                lines.append("阵容调整类新闻可直接服务首发预测、名单变化和临场战力判断，适合做短快讯。")
+            elif "热身赛安排与备战节奏" in summary:
+                lines.append("热身赛封闭或安排变动通常意味着教练组进入针对性演练阶段，适合做备战节奏解读。")
+            elif "行程与场外因素" in summary:
+                lines.append("签证、落地、出行等场外因素容易放大舆情关注，适合做“非竞技因素影响备战”解读。")
+            elif "世界杯相关话题热度持续上升" in summary:
+                lines.append("纯热度型新闻更适合作为流量补充，不宜单独做主稿，建议与球队备战信息拼成合集。")
+
+        for item in focus_team_dynamics:
+            if item["team_name"] in {"美国", "墨西哥"} and "关联比赛关注等级" in item["summary"]:
+                lines.append("美国和墨西哥已经具备前瞻稿基础，适合围绕主场氛围、舆论热度和北美话题性做包装。")
+                break
+
+        deduped: list[str] = []
+        seen: set[str] = set()
+        for line in lines:
+            if line not in seen:
+                seen.add(line)
+                deduped.append(line)
+        return deduped[:5]
 
     def _news_credibility(self, source: str) -> str:
         normalized = source.casefold()
