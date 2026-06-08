@@ -66,4 +66,5 @@ def test_report_manager_generates_markdown_and_html_files(tmp_path) -> None:
     assert "可信度" in artifacts.markdown_content
     assert "AI 总结" in artifacts.markdown_content
     assert "<html" in artifacts.html_content.lower()
-    assert "Japan vs United States" in artifacts.html_content
+    assert "日本 对 美国" in artifacts.html_content
+    assert "运营速览" in artifacts.html_content
