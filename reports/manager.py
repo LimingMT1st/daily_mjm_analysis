@@ -195,6 +195,13 @@ class ReportManager:
         ]
 
         focus_team_dynamics = self._build_focus_team_dynamics(report_data, match_map)
+        today_focus_items = self._build_today_focus_items(
+            top_matches=top_matches,
+            today_matches=today_matches,
+            tomorrow_matches=tomorrow_matches,
+            focus_team_dynamics=focus_team_dynamics,
+            news_items=news_items,
+        )
         ai_summary_lines = self._normalize_ai_summary(ai_summary)
         news_interpretations = self._build_news_interpretations(
             news_items=news_items,
@@ -236,6 +243,7 @@ class ReportManager:
             ),
             "today_matches": today_matches,
             "tomorrow_matches": tomorrow_matches,
+            "today_focus_items": today_focus_items,
             "top_matches": top_matches,
             "focus_matches": focus_matches,
             "upset_risk_board": upset_risk_board,
@@ -291,6 +299,102 @@ class ReportManager:
         if ai_action_items:
             lines.append(f"AI建议：{ai_action_items[0]}")
         return lines
+
+    def _build_today_focus_items(
+        self,
+        top_matches: list[dict],
+        today_matches: list[dict],
+        tomorrow_matches: list[dict],
+        focus_team_dynamics: list[dict],
+        news_items: list[dict],
+    ) -> list[dict]:
+        items: list[dict] = []
+        if top_matches:
+            for index, item in enumerate(top_matches[:3], start=1):
+                reasons: list[str] = []
+                if item["analysis"].attention_level in {"S", "A"}:
+                    reasons.append("关注等级高")
+                if item["analysis"].qualification_impact >= 60:
+                    reasons.append("出线影响明显")
+                if item["analysis"].news_heat >= 40:
+                    reasons.append("舆论热度较高")
+                if not reasons:
+                    reasons.append("具备日更前瞻价值")
+
+                if item["analysis"].upset_risk == "high":
+                    risk_text = "爆冷波动偏高，需要盯临场信息。"
+                elif item["analysis"].upset_risk == "medium":
+                    risk_text = "存在一定不确定性，适合做悬念包装。"
+                else:
+                    risk_text = "赛果预期相对稳定，重点看话题性和出线意义。"
+
+                if index == 1:
+                    publish_angle = "建议作为头条前瞻，突出对抗关系和舆论热度。"
+                elif item["analysis"].news_heat >= 40:
+                    publish_angle = "建议做情报整合稿，重点写赛前动态和名单变化。"
+                else:
+                    publish_angle = "建议做次重点前瞻或赛程提醒卡片。"
+
+                items.append(
+                    {
+                        "rank": index,
+                        "label": item["label"],
+                        "tag": self._focus_tag(index),
+                        "reason": "、".join(reasons),
+                        "risk": risk_text,
+                        "publish_angle": publish_angle,
+                        "confidence_label": item["confidence_label"],
+                    }
+                )
+            return items
+
+        focus_signals = [
+            item for item in focus_team_dynamics if "暂无" not in item["summary"]
+        ]
+        for index, item in enumerate(focus_signals[:2], start=1):
+            items.append(
+                {
+                    "rank": index,
+                    "label": f"{item['team_name']}动态",
+                    "tag": self._focus_tag(index),
+                    "reason": item["summary"],
+                    "risk": "暂无强赛程驱动，风险主要来自舆情和名单变量。",
+                    "publish_angle": "建议做球队晨报或备战动态短稿。",
+                    "confidence_label": item["confidence_label"],
+                }
+            )
+
+        if news_items:
+            lead_news = news_items[0]
+            items.append(
+                {
+                    "rank": len(items) + 1,
+                    "label": "主流媒体重点新闻",
+                    "tag": self._focus_tag(len(items) + 1),
+                    "reason": lead_news["summary_cn"],
+                    "risk": "主要是信息发酵风险，不是赛果风险。",
+                    "publish_angle": "建议做“24小时情报变化”汇总内容。",
+                    "confidence_label": lead_news["credibility_label"],
+                }
+            )
+
+        if not items and (today_matches or tomorrow_matches):
+            next_match = (today_matches + tomorrow_matches)[0]
+            items.append(
+                {
+                    "rank": 1,
+                    "label": f"{next_match['home_name']}对{next_match['away_name']}",
+                    "tag": self._focus_tag(1),
+                    "reason": "虽然缺少高热度外围信息，但仍是最近赛程中的首场比赛。",
+                    "risk": "信息有限，适合保守表述。",
+                    "publish_angle": "建议做赛程提醒和基础信息卡片。",
+                    "confidence_label": "高",
+                }
+            )
+        return items[:3]
+
+    def _focus_tag(self, rank: int) -> str:
+        return {1: "头号", 2: "次重点", 3: "补充位"}.get(rank, "观察")
 
     def _build_fact_briefs(
         self,
