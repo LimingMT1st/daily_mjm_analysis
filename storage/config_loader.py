@@ -39,6 +39,7 @@ DEFAULT_SOURCE_NAMES = {
 }
 DEFAULT_PUSH_CHANNELS = {
     "email": False,
+    "feishu": False,
     "telegram": False,
     "wecom": False,
 }
@@ -59,6 +60,7 @@ class SecretsConfig:
     smtp_password: str = ""
     email_from: str = ""
     email_to: str = ""
+    feishu_webhook_url: str = ""
     telegram_bot_token: str = ""
     telegram_chat_id: str = ""
     wecom_webhook_url: str = ""
@@ -108,6 +110,7 @@ class AppConfig:
                 "football_data": bool(self.secrets.football_data_api_key),
                 "news_api": bool(self.secrets.news_api_key),
                 "email": bool(self.secrets.smtp_host and self.secrets.smtp_username),
+                "feishu": bool(self.secrets.feishu_webhook_url),
                 "telegram": bool(
                     self.secrets.telegram_bot_token and self.secrets.telegram_chat_id
                 ),
@@ -163,6 +166,7 @@ def _read_secrets_from_env() -> SecretsConfig:
         smtp_password=os.getenv("SMTP_PASSWORD", ""),
         email_from=os.getenv("EMAIL_FROM", ""),
         email_to=os.getenv("EMAIL_TO", ""),
+        feishu_webhook_url=os.getenv("FEISHU_WEBHOOK_URL", ""),
         telegram_bot_token=os.getenv("TELEGRAM_BOT_TOKEN", ""),
         telegram_chat_id=os.getenv("TELEGRAM_CHAT_ID", ""),
         wecom_webhook_url=os.getenv("WECOM_WEBHOOK_URL", ""),
