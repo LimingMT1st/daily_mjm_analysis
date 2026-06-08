@@ -34,19 +34,27 @@ class FeishuNotifier:
                 "tag": "markdown",
                 "content": (
                     "**给运营的结论**\n"
-                    + "\n".join(f"- {line}" for line in sections["运营速览"][:4])
+                    + "\n".join(f"- {line}" for line in sections["运营速览"][:5])
                 ),
             }
         ]
 
-        for section_name in ("今日重点", "赛程速览", "爆冷风险", "重点球队", "关键信息变化"):
+        for section_name in (
+            "今日重点",
+            "今日关键信号",
+            "赛程速览",
+            "爆冷风险",
+            "重点球队",
+            "AI建议",
+            "关键信息变化",
+        ):
             lines = sections.get(section_name, [])
             if not lines:
                 continue
             elements.append(
                 {
                     "tag": "markdown",
-                    "content": f"**{section_name}**\n" + "\n".join(f"- {line}" for line in lines[:5]),
+                    "content": f"**{section_name}**\n" + "\n".join(f"- {line}" for line in lines[:4]),
                 }
             )
 
@@ -65,18 +73,22 @@ class FeishuNotifier:
         sections = {
             "运营速览": [],
             "今日重点": [],
+            "今日关键信号": [],
             "赛程速览": [],
             "爆冷风险": [],
             "重点球队": [],
+            "AI建议": [],
             "关键信息变化": [],
         }
         current = None
         mapping = {
             "## 运营速览": "运营速览",
             "## 今日最值得关注的 3 场比赛": "今日重点",
+            "## 今日关键信号": "今日关键信号",
             "## 今日/明日赛程": "赛程速览",
             "## 爆冷风险榜": "爆冷风险",
             "## 重点球队动态": "重点球队",
+            "## AI建议": "AI建议",
             "## 与昨日相比": "关键信息变化",
         }
         for raw_line in content.splitlines():
