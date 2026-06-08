@@ -82,12 +82,12 @@
 <body>
   <main class="page">
     <section class="hero">
-      <h1>{{ title }}</h1>
+      <h1>🏆 {{ title }}</h1>
       <p class="meta">生成时间：{{ generated_at }}</p>
       <p>这是一份面向体育内容运营团队的世界杯情报简报，强调赛程事实、数据推断与 AI 判断分层展示，不包含任何赌博建议或投注建议。</p>
     </section>
 
-    <h2>运营速览</h2>
+    <h2>📌 运营速览</h2>
     <section class="card">
       <ul>
         {% for line in briefing_highlights %}
@@ -96,7 +96,7 @@
       </ul>
     </section>
 
-    <h2>今日最值得关注的 3 场比赛</h2>
+    <h2>🔥 今日最值得关注的 3 场比赛</h2>
     <div class="grid">
       {% if top_matches %}
       {% for item in top_matches %}
@@ -111,7 +111,7 @@
       {% endif %}
     </div>
 
-    <h2>今日关键信号</h2>
+    <h2>🧭 今日关键信号</h2>
     <section class="card">
       <ul>
         {% if fact_briefs %}
@@ -124,7 +124,7 @@
       </ul>
     </section>
 
-    <h2>今日 / 明日赛程</h2>
+    <h2>🗓️ 今日 / 明日赛程</h2>
     <div class="grid">
       <section class="card">
         <h3>今日赛程</h3>
@@ -152,7 +152,7 @@
       </section>
     </div>
 
-    <h2>爆冷风险榜</h2>
+    <h2>⚠️ 爆冷风险榜</h2>
     <section class="card">
       <ul>
         {% if upset_risk_board %}
@@ -165,7 +165,7 @@
       </ul>
     </section>
 
-    <h2>重点球队动态</h2>
+    <h2>👥 重点球队动态</h2>
     <section class="card">
       <ul>
         {% if focus_team_dynamics %}
@@ -178,7 +178,7 @@
       </ul>
     </section>
 
-    <h2>重点比赛前瞻</h2>
+    <h2>🎯 重点比赛前瞻</h2>
     {% if focus_matches %}
     {% for item in focus_matches %}
     <section class="card">
@@ -198,7 +198,7 @@
     <section class="card"><p>暂无前瞻内容。</p></section>
     {% endif %}
 
-    <h2>新闻情报</h2>
+    <h2>📰 新闻情报</h2>
     <section class="card">
       <ul>
         {% if news_items %}
@@ -211,7 +211,20 @@
       </ul>
     </section>
 
-    <h2>数据分析</h2>
+    <h2>🧠 新闻解读</h2>
+    <section class="card">
+      <ul>
+        {% if news_interpretations %}
+        {% for line in news_interpretations %}
+        <li><span class="tag">AI判断</span><span class="tag medium">中</span>{{ line }}</li>
+        {% endfor %}
+        {% else %}
+        <li>暂无可输出的新闻解读。</li>
+        {% endif %}
+      </ul>
+    </section>
+
+    <h2>📊 数据分析</h2>
     <section class="card">
       <ul>
         {% if focus_matches %}
@@ -224,7 +237,7 @@
       </ul>
     </section>
 
-    <h2>与昨日相比</h2>
+    <h2>🔄 与昨日相比</h2>
     <section class="card">
       <ul>
         <li><span class="tag">事实</span><span class="tag medium">中</span>新增新闻数量：{{ changes.new_news_count }}</li>
@@ -245,7 +258,7 @@
       </ul>
     </section>
 
-    <h2>AI 总结</h2>
+    <h2>🤖 AI 总结</h2>
     <section class="card">
       <ul>
         {% if ai_summary_lines %}
@@ -258,7 +271,7 @@
       </ul>
     </section>
 
-    <h2>AI建议</h2>
+    <h2>💡 AI建议</h2>
     <section class="card">
       <ul>
         {% if ai_action_items %}
@@ -271,7 +284,7 @@
       </ul>
     </section>
 
-    <h2>数据来源说明</h2>
+    <h2>📎 数据来源说明</h2>
     <section class="card">
       <ul>
         {% for source in data_sources %}
@@ -280,7 +293,7 @@
       </ul>
     </section>
 
-    <h2>合规说明</h2>
+    <h2>✅ 合规说明</h2>
     <section class="card">
       <p><span class="tag">事实</span><span class="tag high">高</span>本简报仅用于内容研判与运营参考，不构成任何赌博建议或投注建议。</p>
     </section>
