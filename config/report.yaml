@@ -10,6 +10,6 @@ sections:
   alerts: true
 push_channels:
   email: false
+  feishu: false
   telegram: false
   wecom: false
-
