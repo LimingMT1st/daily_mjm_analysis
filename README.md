@@ -1,13 +1,13 @@
 # Daily MJM Analysis
 
-每日美加墨世界杯情报分析服务。项目会采集赛程和新闻，执行规则分析与 LLM 总结，生成 Markdown / HTML 日报，并支持邮件、Telegram、企业微信推送。
+每日美加墨世界杯情报分析服务。项目会采集赛程和新闻，执行规则分析与 LLM 总结，生成 Markdown / HTML 日报，并支持邮件、飞书、Telegram、企业微信推送。
 
 ## 项目目标
 
 - 自动采集赛程、比分、积分榜、球队新闻、伤病和阵容情报
 - 对比赛进行关注等级、爆冷风险、出线影响、近期状态和舆情分析
 - 使用 LLM 生成中文 Markdown 日报
-- 支持邮件、Telegram、企业微信推送
+- 支持邮件、飞书、Telegram、企业微信推送
 - 支持 GitHub Actions 定时运行和手动触发
 - 通过 GitHub Secrets 管理敏感配置
 
@@ -95,7 +95,7 @@ python main.py --mode daily --run-date 2026-06-07 --send
 - `enabled_sources`
   控制 `schedule`、`standings`、`news`、`injuries`、`squad` 是否启用
 - `push_channels`
-  控制 `email`、`telegram`、`wecom` 是否启用
+  控制 `email`、`feishu`、`telegram`、`wecom` 是否启用
 
 如果 YAML 文件缺失，或者字段未填写，系统会自动回退到默认值。
 
@@ -129,6 +129,20 @@ python main.py --mode daily --run-date 2026-06-07 --send
 
 - `TELEGRAM_BOT_TOKEN`
 - `TELEGRAM_CHAT_ID`
+
+### 飞书推送
+
+- `FEISHU_WEBHOOK_URL`
+
+获取方式：
+
+1. 打开目标飞书群。
+2. 添加群机器人。
+3. 选择自定义机器人或 Webhook 机器人。
+4. 复制机器人提供的 Webhook URL。
+5. 将该 URL 配置到 `FEISHU_WEBHOOK_URL`。
+
+当前实现使用飞书机器人 Webhook 发送文本消息；如果未配置该 Secret，程序会自动跳过飞书推送。
 
 ### 企业微信推送
 
@@ -176,6 +190,7 @@ python main.py --mode daily --send
 - `SMTP_PASSWORD`
 - `EMAIL_FROM`
 - `EMAIL_TO`
+- `FEISHU_WEBHOOK_URL`
 - `TELEGRAM_BOT_TOKEN`
 - `TELEGRAM_CHAT_ID`
 - `WECOM_WEBHOOK_URL`
@@ -247,6 +262,7 @@ python main.py --mode fixtures
 - LLM 或本地降级摘要
 - Markdown / HTML 报告生成
 - 邮件、Telegram、企业微信推送接口
+- 邮件、飞书、Telegram、企业微信推送接口
 - 完整 daily pipeline
 - GitHub Actions 定时运行与 artifact 上传
 
