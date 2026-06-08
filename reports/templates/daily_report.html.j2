@@ -98,12 +98,13 @@
 
     <h2>🔥 今日最值得关注的 3 场比赛</h2>
     <div class="grid">
-      {% if top_matches %}
-      {% for item in top_matches %}
+      {% if today_focus_items %}
+      {% for item in today_focus_items %}
       <article class="card">
-        <h3>{{ item.label }}</h3>
-        <p class="meta">关注等级 {{ item.analysis.attention_level }} | 重要性 {{ item.analysis.importance_score }} | 爆冷风险 {{ item.upset_risk_label }} | 出线影响 {{ item.analysis.qualification_impact }}</p>
-        <p><span class="tag">数据推断</span><span class="tag {{ item.confidence }}">{{ item.confidence_label }}</span>{{ item.explanation_localized }}</p>
+        <h3>{{ item.tag }}：{{ item.label }}</h3>
+        <p><span class="tag">数据推断</span><span class="tag medium">{{ item.confidence_label }}</span>为什么看：{{ item.reason }}</p>
+        <p><span class="tag">数据推断</span><span class="tag medium">{{ item.confidence_label }}</span>风险点：{{ item.risk }}</p>
+        <p><span class="tag">AI判断</span><span class="tag medium">{{ item.confidence_label }}</span>内容建议：{{ item.publish_angle }}</p>
       </article>
       {% endfor %}
       {% else %}
