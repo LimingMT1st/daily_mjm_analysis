@@ -111,6 +111,19 @@
       {% endif %}
     </div>
 
+    <h2>今日关键信号</h2>
+    <section class="card">
+      <ul>
+        {% if fact_briefs %}
+        {% for line in fact_briefs %}
+        <li><span class="tag">事实</span><span class="tag medium">中</span>{{ line }}</li>
+        {% endfor %}
+        {% else %}
+        <li>暂无可提炼的关键信号。</li>
+        {% endif %}
+      </ul>
+    </section>
+
     <h2>今日 / 明日赛程</h2>
     <div class="grid">
       <section class="card">
@@ -241,6 +254,19 @@
         {% endfor %}
         {% else %}
         <li>暂无可用 AI 总结。</li>
+        {% endif %}
+      </ul>
+    </section>
+
+    <h2>AI建议</h2>
+    <section class="card">
+      <ul>
+        {% if ai_action_items %}
+        {% for line in ai_action_items %}
+        <li><span class="tag">AI判断</span><span class="tag medium">中</span>{{ line }}</li>
+        {% endfor %}
+        {% else %}
+        <li>暂无可执行建议。</li>
         {% endif %}
       </ul>
     </section>
