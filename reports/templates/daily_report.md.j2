@@ -17,6 +17,15 @@
 - 【事实】【可信度: 高】暂无重点比赛。
 {% endif %}
 
+## 今日关键信号
+{% if fact_briefs %}
+{% for line in fact_briefs %}
+- 【事实】【可信度: 中】{{ line }}
+{% endfor %}
+{% else %}
+- 【事实】【可信度: 低】暂无可提炼的关键信号。
+{% endif %}
+
 ## 今日/明日赛程
 ### 今日赛程
 {% if today_matches %}
@@ -114,6 +123,15 @@
 {% endfor %}
 {% else %}
 - 暂无可用 AI 总结。
+{% endif %}
+
+## AI建议
+{% if ai_action_items %}
+{% for line in ai_action_items %}
+- 【AI判断】【可信度: 中】{{ line }}
+{% endfor %}
+{% else %}
+- 【AI判断】【可信度: 低】暂无可执行建议。
 {% endif %}
 
 ## 数据来源说明
