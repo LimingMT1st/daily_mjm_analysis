@@ -34,6 +34,7 @@ class NewsCollector:
 
         results: list[NewsItem] = []
         seen_titles: set[str] = set()
+        seen_urls: set[str] = set()
         keywords = [keyword.casefold() for keyword in DEFAULT_KEYWORDS + focus_teams]
 
         for source in rss_sources:
@@ -41,9 +42,15 @@ class NewsCollector:
             for entry in parsed_feed.entries:
                 title = self._as_text(entry.get("title"))
                 summary = self._as_text(entry.get("summary") or entry.get("description"))
+                url = self._as_text(entry.get("link"))
                 normalized_title = title.strip().casefold()
+                normalized_url = url.strip().casefold()
 
-                if not title or normalized_title in seen_titles:
+                if (
+                    not title
+                    or normalized_title in seen_titles
+                    or (normalized_url and normalized_url in seen_urls)
+                ):
                     continue
                 if not self._matches_keywords(title=title, summary=summary, keywords=keywords):
                     continue
@@ -59,12 +66,14 @@ class NewsCollector:
                         title=title,
                         summary=summary,
                         source=self._as_text(source.get("name")) or "RSS",
-                        url=self._as_text(entry.get("link")),
+                        url=url,
                         published_at=published_at,
                         sentiment=None,
                     )
                 )
                 seen_titles.add(normalized_title)
+                if normalized_url:
+                    seen_urls.add(normalized_url)
 
         results.sort(key=lambda item: item.published_at, reverse=True)
         return results
