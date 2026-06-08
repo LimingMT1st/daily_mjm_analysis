@@ -16,14 +16,7 @@ class FeishuNotifier:
             print("Warning: feishu notifier skipped because webhook is missing.")
             return False
 
-        # Feishu custom bots reliably accept simple text payloads.
-        text = f"{title}\n\n{content}"
-        payload = {
-            "msg_type": "text",
-            "content": {
-                "text": text[:4000],
-            },
-        }
+        payload = self._build_card_payload(title=title, content=content)
         req = request.Request(
             self.webhook_url,
             data=json.dumps(payload).encode("utf-8"),
@@ -33,3 +26,72 @@ class FeishuNotifier:
         with request.urlopen(req, timeout=30) as response:
             response.read()
         return True
+
+    def _build_card_payload(self, title: str, content: str) -> dict:
+        sections = self._extract_sections(content)
+        elements = [
+            {
+                "tag": "markdown",
+                "content": (
+                    "**给运营的结论**\n"
+                    + "\n".join(f"- {line}" for line in sections["运营速览"][:4])
+                ),
+            }
+        ]
+
+        for section_name in ("今日重点", "赛程速览", "爆冷风险", "重点球队", "关键信息变化"):
+            lines = sections.get(section_name, [])
+            if not lines:
+                continue
+            elements.append(
+                {
+                    "tag": "markdown",
+                    "content": f"**{section_name}**\n" + "\n".join(f"- {line}" for line in lines[:5]),
+                }
+            )
+
+        return {
+            "msg_type": "interactive",
+            "card": {
+                "header": {
+                    "template": "blue",
+                    "title": {"tag": "plain_text", "content": title},
+                },
+                "elements": elements,
+            },
+        }
+
+    def _extract_sections(self, content: str) -> dict[str, list[str]]:
+        sections = {
+            "运营速览": [],
+            "今日重点": [],
+            "赛程速览": [],
+            "爆冷风险": [],
+            "重点球队": [],
+            "关键信息变化": [],
+        }
+        current = None
+        mapping = {
+            "## 运营速览": "运营速览",
+            "## 今日最值得关注的 3 场比赛": "今日重点",
+            "## 今日/明日赛程": "赛程速览",
+            "## 爆冷风险榜": "爆冷风险",
+            "## 重点球队动态": "重点球队",
+            "## 与昨日相比": "关键信息变化",
+        }
+        for raw_line in content.splitlines():
+            line = raw_line.strip()
+            if line in mapping:
+                current = mapping[line]
+                continue
+            if not current or not line:
+                continue
+            if line.startswith("## "):
+                current = None
+                continue
+            if line.startswith("### "):
+                sections[current].append(line.replace("### ", "").strip())
+                continue
+            if line.startswith("- "):
+                sections[current].append(line[2:].strip())
+        return sections
