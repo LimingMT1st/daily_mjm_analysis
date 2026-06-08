@@ -109,7 +109,7 @@ def test_sqlite_store_saves_runs_and_computes_changes(tmp_path) -> None:
         report_data=previous_data,
         artifacts=previous_artifacts,
         ai_summary="old",
-        send_results={"email": False, "telegram": False, "wecom": False},
+        send_results={"email": False, "feishu": False, "telegram": False, "wecom": False},
         changes=ReportChanges(1, [], []),
     )
 
